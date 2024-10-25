@@ -42,14 +42,17 @@ export default EcuationData;
 
 const styles = StyleSheet.create({
   input: {
-    fontSize: 18,
+    fontSize: 15,
     borderWidth: 2,
-    height: 25,
+    height: 30,
     width: "25%",
-    padding: 2,
+    padding: 5,
+    backgroundColor: "#fff",
+    borderRadius: 5,
   },
   text: {
     fontSize: 18,
+    color: "#fff"
   },
   row: {
     flexDirection: "row",

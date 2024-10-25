@@ -3,7 +3,7 @@ import { StyleSheet, View, Text } from "react-native";
 import CalculateSolution from "./src/components/CalculateSolution";
 import EcuationData from "./src/components/EcuationData";
 import Solution from "./src/components/Solution";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const App = () => {
   const [a, setA] = useState(0);
@@ -11,20 +11,33 @@ const App = () => {
   const [c, setC] = useState(0);
   const [x1, setX1] = useState(0);
   const [x2, setX2] = useState(0);
-  const [discriminante, setDiscriminante] = useState(0);
   const [hasSolution, setHasSolution] = useState(true);
 
   const data = { a, b, c, setA, setB, setC, x1, x2 };
 
   const calculateSolution = () => {
-    setDiscriminante(Math.pow(b, 2) - 4 * a * c);
-    setHasSolution(discriminante >= 0);
-    setX1(Number(-b + Math.sqrt(discriminante) / (2 * a)).toFixed(2));
-    setX2(Number(-b - Math.sqrt(discriminante) / (2 * a)).toFixed(2));
+    const discriminant = Math.pow(b, 2) - 4 * a * c;
+  
+    const hasSol = discriminant >= 0;
+    setHasSolution(hasSol);
+  
+    if (hasSol) {
+      const sqrtDiscriminant = Math.sqrt(discriminant);
+      const denominator = 2 * a;
+  
+      const root1 = (-b + sqrtDiscriminant) / denominator;
+      const root2 = (-b - sqrtDiscriminant) / denominator;
+  
+      setX1(Number(root1).toFixed(2));
+      setX2(Number(root2).toFixed(2));
+    }
   };
 
+  useEffect(() => {setHasSolution(true)}, [a, b, c]);
+  useEffect(() => {setX1(0), setX2(0)}, [a, b, c]);
+
   return (
-    <>
+    <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.title}>Solucion de Ecuaciones Cuadraticas</Text>
         <EcuationData data={data} />
@@ -33,14 +46,14 @@ const App = () => {
         {hasSolution ? (
           <Solution data={data} />
         ) : (
-          <Text>No tiene solucion</Text>
+          <Text style={styles.errorText}>No tiene solucion</Text>
         )}
       </View>
       <View style={styles.footerContainer}>
         <CalculateSolution calculateSolution={calculateSolution} />
       </View>
-      <StatusBar style="auto" />
-    </>
+      <StatusBar hidden />
+    </View>
   );
 };
 
@@ -49,9 +62,7 @@ export default App;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: "#e1ecfe",
   },
   headerContainer: {
     flex: 2,
@@ -63,7 +74,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 4,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -79,4 +89,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     margin: 10,
   },
+  errorText: {
+    fontSize: 22,
+    color: "red",
+  }
 });
